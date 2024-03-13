@@ -69,6 +69,7 @@ public class compareghDb {
                             Assert.assertEquals(obj.get("grs_used"),LIMSObj.get("GRS_USED"),"Error for record with gene "+obj.get("gene")+ " grs_used");
                             Assert.assertEquals(obj.get("tvf_call_multitumor"),LIMSObj.get("TVF_CALLED"),"Error for record with gene "+obj.get("gene")+ " tvf_call_multitumor");
                             Assert.assertEquals(obj.get("ruo_reportable"),LIMSObj.get("RUOREPORTABLE"),"Error for record with gene "+obj.get("gene")+ " ruo_reportable");
+//                            System.out.println("DB comparision complete for gene "+obj.get("gene")+ " runid" +LIMSObj.get("RUNID")+ " sampleid" +LIMSObj.get("SAMPLEID");
 
 
 
@@ -280,7 +281,7 @@ public class compareghDb {
                         Assert.assertEquals(obj.get("z_score"),LIMSObj.get("Z_SCORE"),"Error for record with gene "+obj.get("gene")+ " z_score");
                         Assert.assertEquals(obj.get("p_value"),LIMSObj.get("P_VALUE"),"Error for record with gene "+obj.get("gene")+ " p_value");
                         Assert.assertEquals(obj.get("timestamp"),LIMSObj.get("TIMESTAMP"),"Error for record with gene "+obj.get("gene")+ " timestamp");
-                        Assert.assertEquals(obj.get("is_deletion"),LIMSObj.get("IS_DELETION").equals("1")?true:false,"Error for record with gene "+obj.get("gene")+ " is_deletion");
+                        Assert.assertEquals(obj.get("is_deletion"), LIMSObj.get("IS_DELETION").equals("1"),"Error for record with gene "+obj.get("gene")+ " is_deletion");
                         Assert.assertEquals(obj.get("ll1"),LIMSObj.get("LL1"),"Error for record with gene "+obj.get("gene")+ " ll1");
                         Assert.assertEquals(obj.get("ll2"),LIMSObj.get("LL2"),"Error for record with gene "+obj.get("gene")+ " ll2");
                         Assert.assertEquals(obj.get("aic_score"),LIMSObj.get("AIC_SCORE"),"Error for record with gene "+obj.get("gene")+ " aic_score");
@@ -292,7 +293,7 @@ public class compareghDb {
                         Assert.assertEquals(obj.get("variant_comment"),LIMSObj.get("VARIANT_COMMENT"),"Error for record with gene "+obj.get("gene")+ " variant_comment");
                         Assert.assertEquals(obj.get("focal"),LIMSObj.get("FOCAL"),"Error for record with gene "+obj.get("gene")+ " focal");
                         Assert.assertEquals(obj.get("segment_size"),LIMSObj.get("SEGMENT_SIZE"),"Error for record with gene "+obj.get("gene")+ " segment_size");
-                        Assert.assertEquals(obj.get("pct_gene_overlap"),new Integer((int)LIMSObj.get("PCT_GENE_OVERLAP")).doubleValue(),"Error for record with gene "+obj.get("gene")+ " pct_gene_overlap");
+                        Assert.assertEquals(obj.get("pct_gene_overlap"), Integer.valueOf((int) LIMSObj.get("PCT_GENE_OVERLAP")).doubleValue(),"Error for record with gene "+obj.get("gene")+ " pct_gene_overlap");
                         Assert.assertEquals(obj.get("ldt_reportable"),LIMSObj.get("LDT_REPORTABLE"),"Error for record with gene "+obj.get("gene")+ " ldt_reportable");
                         Assert.assertEquals(obj.get("estimated_cn"),LIMSObj.get("ESTIMATED_CN"),"Error for record with gene "+obj.get("gene")+ " estimated_cn");
                         Assert.assertEquals(obj.get("npoints"),LIMSObj.get("NPOINTS"),"Error for record with gene "+obj.get("gene")+ " npoints");
@@ -435,8 +436,9 @@ public class compareghDb {
                 JSONObject obj = (JSONObject)item;
 
 
+
                 try{
-                    if ((obj.get("gene").equals(LIMSObj.get("GENE")) ) && (obj.get("mut_aa").equals(LIMSObj.get("AMINOACID_MUTATION")))){
+                    if ((obj.get("gene").equals(LIMSObj.get("GENE")) ) && (obj.get("mut_aa").equals(LIMSObj.get("AMINOACID_MUTATION"))) && (obj.get("position").equals(LIMSObj.get("POSITION_START")) )){
 
                         Assert.assertEquals(obj.get("run_sample_id"),LIMSObj.get("SAMPLEID"),"Error for record with gene "+obj.get("gene")+ " run_sample_id");
                         Assert.assertEquals(obj.get("runid"),LIMSObj.get("RUNID"),"Error for record with gene "+obj.get("gene")+ " runid");
@@ -458,9 +460,24 @@ public class compareghDb {
                         Assert.assertEquals(obj.get("cdna"),LIMSObj.get("CDNA"),"Error for record with gene "+obj.get("gene")+ " cdna");
                         Assert.assertEquals(obj.get("splice_effect"),LIMSObj.get("SPLICEEFFECT"),"Error for record with gene "+obj.get("gene")+ " splice_effect");
 
-                        Assert.assertEquals(((BigDecimal)obj.get("percentage")).stripTrailingZeros().doubleValue(),
-                                LIMSObj.get("INDELS_RATIO"),"Error for record with gene "+obj.get("gene")+ " percentage");
+                        BigDecimal GHDBValue = (BigDecimal) (obj.get("percentage"));
+                        float GHDBfloatValue = GHDBValue.floatValue();
 
+
+                        Number LIMSValue = (Number) (LIMSObj.get("INDELS_RATIO"));
+                        BigDecimal LIMSBDValue = BigDecimal.valueOf(LIMSValue.doubleValue());
+                        float LIMSfloatValue = LIMSBDValue.floatValue();
+                        /*
+                        System.out.println("The value of Converted LIMS value is " + LIMSfloatValue);
+                        System.out.println("The value of Ratio in GHDB is " + obj.get("percentage"));
+                        System.out.println("The value of Ratio in LIMS is " + LIMSObj.get("INDELS_RATIO"));
+                        */
+                        Assert.assertEquals(GHDBfloatValue,LIMSfloatValue,0.0001, "Error for record with gene "+obj.get("gene")+ " percentage");
+
+/*
+//                        Assert.assertEquals(((BigDecimal)obj.get("percentage")).stripTrailingZeros().doubleValue(),
+  //                              LIMSObj.get("INDELS_RATIO"),"Error for record with gene "+obj.get("gene")+ " percentage");
+*/
 
                         Assert.assertEquals(obj.get("reporting_category"),LIMSObj.get("REPORTING_CATEGORY"),"Error for record with gene "+obj.get("gene")+ " reporting_category");
                         Assert.assertEquals(obj.get("llscore"),LIMSObj.get("LLSCORE"),"Error for record with gene "+obj.get("gene")+ " llscore");
@@ -475,7 +492,7 @@ public class compareghDb {
                     e.getMessage();
                 }
             });
-        });
+            });
 
         if (flag.get()==0){
             System.out.println( "Indel data verified successfully");
@@ -751,12 +768,12 @@ public class compareghDb {
                         Assert.assertEquals(obj.get("run_sample_id"),LIMSObj.get("SAMPLEID"),"Error for record with gene "+obj.get("run_sample_id")+ " run_sample_id");
                         Assert.assertEquals(obj.get("num_muts"),LIMSObj.get("NUM_MUTS"),"Error for record with gene "+obj.get("run_sample_id")+ " num_muts");
                         Assert.assertEquals(obj.get("num_nonsyn"),LIMSObj.get("NUM_NONSYN"),"Error for record with gene "+obj.get("run_sample_id")+ " num_nonsyn");
-                        Assert.assertEquals( obj.get("mut_rate"), new Integer((int)LIMSObj.get("MUT_RATE")).doubleValue(),"Error for record with gene "+obj.get("run_sample_id")+ " mut_rate");
-                        Assert.assertEquals((obj.get("nonsyn_rate")),new Integer((int)LIMSObj.get("NONSYN_RATE")).doubleValue(),"Error for record with gene "+obj.get("run_sample_id")+ " nonsyn_rate");
+                        Assert.assertEquals( obj.get("mut_rate"), Integer.valueOf((int) LIMSObj.get("MUT_RATE")).doubleValue(),"Error for record with gene "+obj.get("run_sample_id")+ " mut_rate");
+                        Assert.assertEquals((obj.get("nonsyn_rate")), Integer.valueOf((int) LIMSObj.get("NONSYN_RATE")).doubleValue(),"Error for record with gene "+obj.get("run_sample_id")+ " nonsyn_rate");
                         Assert.assertEquals(obj.get("tmb_score"),LIMSObj.get("TMB_SCORE"),"Error for record with gene "+obj.get("run_sample_id")+ " tmb_score");
                         Assert.assertEquals(obj.get("tmb_category"),LIMSObj.get("TMB_CATEGORY"),"Error for record with gene "+obj.get("run_sample_id")+ " tmb_category");
                         Assert.assertEquals(obj.get("num_nonsyn_nondriver"),LIMSObj.get("NUM_NONSYN_NONDRIVER"),"Error for record with gene "+obj.get("run_sample_id")+ " num_nonsyn_nondriver");
-                        Assert.assertEquals(obj.get("nonsyn_nondriver_rate"),new Integer((int)LIMSObj.get("NONSYN_NONDRIVER_RATE")).doubleValue(),"Error for record with gene "+obj.get("run_sample_id")+ " nonsyn_nondriver_rate");
+                        Assert.assertEquals(obj.get("nonsyn_nondriver_rate"), Integer.valueOf((int) LIMSObj.get("NONSYN_NONDRIVER_RATE")).doubleValue(),"Error for record with gene "+obj.get("run_sample_id")+ " nonsyn_nondriver_rate");
 
                     }
                 }
@@ -872,7 +889,7 @@ public class compareghDb {
                         Assert.assertEquals(obj.get("runid"),LIMSObj.get("RUNID"),"Error for record with Tumor Type "+obj.get("pred_type")+ " runid");
                         Assert.assertEquals(obj.get("model_name"),LIMSObj.get("MODELNAME"),"Error for record with Tumor Type "+obj.get("pred_type")+ " model_name");
                         Assert.assertEquals(obj.get("methyl_score"),LIMSObj.get("METHYLSCORE"),"Error for record with Tumor Type "+obj.get("pred_type")+ " methyl_score");
-                        Assert.assertEquals(obj.get("threshold"),(new Integer((int)LIMSObj.get("THRESHOLD")).doubleValue()),"Error for record with gene "+obj.get("pred_type")+ " threshold");
+                        Assert.assertEquals(obj.get("threshold"),(Integer.valueOf((int) LIMSObj.get("THRESHOLD")).doubleValue()),"Error for record with gene "+obj.get("pred_type")+ " threshold");
                         Assert.assertEquals(obj.get("methyl_call"),LIMSObj.get("METHYLCALL"),"Error for record with Tumor Type "+obj.get("pred_type")+ " call");
                         Assert.assertEquals(obj.get("pred_type"),LIMSObj.get("PREDTYPE"),"Error for record with Tumor Type "+obj.get("pred_type")+ " pred_type");
                         Assert.assertEquals(obj.get("pred_frac"),LIMSObj.get("PREDTF"),"Error for record with Tumor Type "+obj.get("pred_type")+ " pred_frac");

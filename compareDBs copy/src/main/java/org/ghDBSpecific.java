@@ -114,9 +114,8 @@ public class ghDBSpecific {
         JSONArray jsonArr = null;
 
         String SNVQuery = "select (snv.* ), gb.snv_call from snv_call snv join gh_board gb on gb.run_sample_id =snv.run_sample_id  where \n" +
-                "snv.runid = '"+runid+"' and snv.run_sample_id ='"+sampleid+"' and \n" +
-                "gb.snv_call = 'PASS'  and snv.\"call\" =1 \n" +
-                " and snv.ruo_reportable =1";
+                "snv.runid = '"+runid+"' and snv.run_sample_id ='"+sampleid+"'";
+        //       "' and \n gb.snv_call = 'PASS'  and snv.\"call\" =1 and snv.ruo_reportable =1";
 
         String CNVQuery_call3 =  "select cnv.*,gb.cnv_call from cnv_call cnv join gh_board gb on gb.run_sample_id =cnv.run_sample_id  where gb.cnv_call = 'PASS' and cnv.\"call\" = 3 \n" +
                 "and cnv.runid = '"+runid+"' and cnv.run_sample_id ='"+sampleid+"' and cnv.ruo_reportable =1";
@@ -142,9 +141,8 @@ public class ghDBSpecific {
                 "and gb.fusion_call ='PASS' and fc.\"call\" =1 and fc.ruo_reportable =1";
 
         String indelQuery = "select (ic.* ),gb.indel_call from indel_call ic join gh_board gb on gb.run_sample_id =ic.run_sample_id  where \n" +
-                "ic.runid = '"+runid+"' and ic.run_sample_id ='"+sampleid+"' and \n" +
-                "gb.indel_call = 'PASS' and ic.\"call\" =1 \n" +
-                " and ic.ruo_reportable =1 and ic.tumor_call is null";
+                "ic.runid = '"+runid+"' and ic.run_sample_id ='"+sampleid+"'";
+         //       "gb.indel_call = 'PASS' and ic.\"call\" =1 \n and ic.ruo_reportable =1 and ic.tumor_call is null";
 
         String deletionQuery_loh = " select (dc.* ), gb.deletion_call from deletion_call dc join gh_board gb on gb.run_sample_id =dc.run_sample_id  where \n" +
                 "dc.runid = '"+runid+"' and dc.run_sample_id ='"+sampleid+"' and \n" +

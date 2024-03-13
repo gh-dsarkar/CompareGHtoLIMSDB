@@ -5,6 +5,8 @@ import org.json.*;
 import java.math.*;
 import java.sql.*;
 import java.util.*;
+import java.util.Scanner;
+import javax.swing.*;
 
 public class LIMSDbSpecific {
     private static Connection con;
@@ -81,17 +83,78 @@ public class LIMSDbSpecific {
 
 
     public JSONArray getLIMSdata(){
-        String username = "dsarkar";;
-        String password = "Ventana@27gh";
-        String hostname = "gh-val-db-lims.ghdna.io";
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your LIMS Username: ");
+
+        // Read the input from the user and store it in a variable
+        String username = scanner.nextLine();
+        String password = JOptionPane.showInputDialog("Enter your LIMS DB password: ");
+        System.out.print("You Entered your LIMS DB password: ");
+
+        System.out.println("Enter your LIMS environment you want to work in UpperCase: ");
+        System.out.println("SQA");
+        System.out.println("VAL");
+        System.out.println("STAGING");
+        String LIMSenv = scanner.nextLine();
+        String hostname = ""; // Declare variables outside of if-else blocks
+        String port = "";
+        String SID = "";
+
+        if (LIMSenv.equals("SQA")) {
+            hostname = "gh-sqa-db-lims.ghdna.io"; // Assign values without re-declaration
+            port = "1521";
+            SID = "limssqa";
+        } else if (LIMSenv.equals("VAL")) {
+            hostname = "gh-val-db-lims.ghdna.io";
+            port = "1521";
+            SID = "limsval";
+        } else if (LIMSenv.equals("STAGING")) {
+            hostname = "gh-staging-db-lims.ghdna.io";
+            port = "1521";
+            SID = "limsstaging";
+        } else {
+            System.out.println("The user entered wrong DB.");
+        }
+            // Close the scanner
+            scanner.close();
+/*
+        if (LIMSenv == "SQA") {
+            String hostname = new String("gh-sqa-db-lims.ghdna.io");
+            String port = new String("1521");
+            String SID = new String("limssqa");
+        } else if (LIMSenv == "VAL") {
+            String hostname = new String("gh-val-db-lims.ghdna.io");
+            String port = new String("1521");
+            String SID = new String("limsval");
+        } else if (LIMSenv == "STAGING") {
+            String hostname = new String("gh-staging-db-lims.ghdna.io");
+            String port = new String("1521");
+            String SID = new String("limsstaging");
+        }
+        else {
+            System.out.println("The user entered wrong DB.");
+            String hostname = new String("gh-sqa-db-lims.ghdna.io");
+            String port = new String("1521");
+            String SID = new String("limssqa");
+        }
+
+ */
+
+
+
+
+/*
+        String username = "ppyapalli";;
+        String password = "***";
+        String hostname = "gh-sqa-db-lims.ghdna.io";
         String port = "1521";
-        String SID = "limsval";
+        String SID = "limssqa";
+*/
 
         String DB_LIMS_Schema= "labvantage" ;
         String DB_ServiceName = "ocrl";
         String connectionString="" ;
         HashMap<String,JSONArray> geneMap = new HashMap<String,JSONArray>();
-
 
 
         if (!SID.equals("")) {
@@ -128,7 +191,7 @@ public class LIMSDbSpecific {
                 switch (testNumber) {
                     case 1: //SNV
                         String SNVQuery ="SELECT * FROM U_GHSNV WHERE runid ='"+rundid+ "' and SAMPLEID ='"+sampleid+"'";
-//                        System.out.println(SNVQuery);
+                        System.out.println(SNVQuery);
                         results = st.executeQuery(SNVQuery);
 
                         break;
